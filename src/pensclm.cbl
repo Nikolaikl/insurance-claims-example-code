@@ -105,7 +105,7 @@
           05 WAGE-INDEX            PIC 9V999.
        
        FD CLAIM-REPORT.
-       01 REPORT-LINE              PIC X(132).
+       01 REPORT-LINE.
           05 FILLER                PIC X(80).
           05 FILLER                PIC X(52).
        
@@ -315,7 +315,7 @@
                       GEO-FACTOR-FILE
                 OUTPUT CLAIM-REPORT.
            
-           * Initialize output file with header
+           *> Initialize output file with header
            MOVE 'PENSION CLAIM CALCULATION REPORT' TO REPORT-LINE
            WRITE REPORT-LINE AFTER ADVANCING PAGE
            MOVE SPACES TO REPORT-LINE
