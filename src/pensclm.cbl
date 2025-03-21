@@ -73,7 +73,7 @@
        DATA DIVISION.
        FILE SECTION.
        FD INPUT-FILE.
-       01 INPUT-RECORD.
+       01 WS-INPUT-RECORD.
           05 CLAIM-ID               PIC X(12).
           05 FILLER                 PIC X VALUE ','.
           05 POLICY-NUMBER          PIC X(10).
@@ -463,7 +463,7 @@
       * 4. Load industry and geographic risk factors                  *
       * 5. Perform actuarial calculations                             *
       *----------------------------------------------------------------*
-           UNSTRING INPUT-RECORD DELIMITED BY ','
+           UNSTRING WS-INPUT-RECORD DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
                     WS-ACC-DATE OF WS-INSURED-DETAILS
@@ -567,9 +567,9 @@
       * Calculate base percentage based on disability percentage
       * using actuarial formula based on GLM principles
            COMPUTE WS-BASE-PCT = WS-MIN-PENSION-PCT + 
-                               (WS-DISABILITY OF WS-INSURED-DETAILS * 0.5) +
-                               ((WS-DISABILITY OF WS-INSURED-DETAILS * 
-                                WS-DISABILITY OF WS-INSURED-DETAILS) / 200)
+                               (WS-DISABILITY OF WS-INSURED-DETAILS * 0.5)
+                             + ((WS-DISABILITY OF WS-INSURED-DETAILS 
+                               * WS-DISABILITY OF WS-INSURED-DETAILS) / 200)
            END-COMPUTE
            
       * Ensure the base percentage doesn't exceed maximum
@@ -632,7 +632,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS SECTION.
+       250-CALCULATE-COSTS.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
