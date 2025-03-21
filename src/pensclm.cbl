@@ -463,7 +463,7 @@
       * 4. Load industry and geographic risk factors                  *
       * 5. Perform actuarial calculations                             *
       *----------------------------------------------------------------*
-           UNSTRING INPUT-RECORD DELIMITED BY ','
+           UNSTRING INPUT-RECORD OF FILE SECTION DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
                     WS-ACC-DATE OF WS-INSURED-DETAILS
@@ -570,6 +570,7 @@
                                (WS-DISABILITY OF WS-INSURED-DETAILS * 0.5) +
                                ((WS-DISABILITY OF WS-INSURED-DETAILS * 
                                 WS-DISABILITY OF WS-INSURED-DETAILS) / 200)
+           END-COMPUTE
            
       * Ensure the base percentage doesn't exceed maximum
            IF WS-BASE-PCT > WS-MAX-PENSION-PCT
@@ -631,7 +632,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS SECTION.
+       250-CALCULATE-COSTS.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
