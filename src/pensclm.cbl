@@ -73,6 +73,7 @@
        DATA DIVISION.
        FILE SECTION.
        FD INPUT-FILE.
+       01 INPUT-RECORD.
           05 CLAIM-ID               PIC X(12).
           05 FILLER                 PIC X VALUE ','.
           05 POLICY-NUMBER          PIC X(10).
@@ -462,7 +463,7 @@
       * 4. Load industry and geographic risk factors                  *
       * 5. Perform actuarial calculations                             *
       *----------------------------------------------------------------*
-           UNSTRING INPUT-RECORD IN FILE SECTION DELIMITED BY ','
+           UNSTRING INPUT-RECORD DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
                     WS-ACC-DATE OF WS-INSURED-DETAILS
@@ -565,11 +566,9 @@
            
       * Calculate base percentage based on disability percentage
       * using actuarial formula based on GLM principles
-           compute ws-base-pct = ws-min-pension-pct + 
-                               (ws-disability OF WS-INSURED-DETAILS * 0.5) +
-                               ((ws-disability OF WS-INSURED-DETAILS * 
-                                ws-disability OF WS-INSURED-DETAILS) 
-                                                              / 200).
+           COMPUTE WS-BASE-PCT = WS-MIN-PENSION-PCT + 
+                               (WS-DISABILITY * 0.5) +
+                               ((WS-DISABILITY * WS-DISABILITY) / 200)
            
       * Ensure the base percentage doesn't exceed maximum
            IF WS-BASE-PCT > WS-MAX-PENSION-PCT
@@ -589,8 +588,8 @@
                    PERFORM 900-TERMINATION
            END-READ.
            
-           MOVE INDUSTRY-CODE OF POLICY-RECORD TO WS-INDUSTRY OF WS-INSURED-DETAILS.
-           MOVE GEO-REGION-CODE OF POLICY-RECORD TO WS-GEO-REGION OF WS-INSURED-DETAILS.
+           MOVE INDUSTRY-CODE OF POLICY-RECORD TO WS-INDUSTRY.
+           MOVE GEO-REGION-CODE OF POLICY-RECORD TO WS-GEO-REGION.
            MOVE EMR-VALUE OF POLICY-RECORD TO WS-EMR-FACTOR.
            MOVE SAFETY-PROG-RATING OF POLICY-RECORD TO WS-SAFETY-FACTOR.
 
@@ -603,7 +602,7 @@
            MOVE WS-INDUSTRY TO INDUSTRY-CODE OF INDUSTRY-RISK-RECORD.
            READ INDUSTRY-RISK-FILE
                INVALID KEY
-                   DISPLAY 'INDUSTRY NOT FOUND: ' WS-INDUSTRY-CODE
+                   DISPLAY 'INDUSTRY NOT FOUND: ' WS-INDUSTRY
                    PERFORM 900-TERMINATION
            END-READ.
            
@@ -623,7 +622,7 @@
            MOVE WS-GEO-REGION TO GEO-REGION-CODE OF GEO-FACTOR-RECORD.
            READ GEO-FACTOR-FILE
                INVALID KEY
-                   DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION-CODE
+                   DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION
                    PERFORM 900-TERMINATION
            END-READ.
            
@@ -631,7 +630,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS.
+       250-CALCULATE-COSTS SECTION.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
@@ -797,7 +796,7 @@
                    MOVE 'CRITICAL'  TO WS-D-SEVERITY
            END-EVALUATE.
            
-           MOVE WS-DISABILITY-PCT   TO WS-D-DISABILITY.
+           MOVE WS-DISABILITY       TO WS-D-DISABILITY.
            MOVE WS-DIRECT-COSTS     TO WS-D-DIRECT-COSTS.
            
            MOVE WS-AGE-FACTOR       TO WS-F-AGE-FACTOR.
