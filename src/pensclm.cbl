@@ -51,7 +51,7 @@
            SELECT CLAIM-FILE ASSIGN TO CLMFILE
            ORGANIZATION IS INDEXED
            ACCESS MODE IS RANDOM
-           RECORD KEY IS CLAIM-ID
+           RECORD KEY IS CLAIM-ID OF CLAIM-RECORD
            FILE STATUS IS WS-CLAIM-STATUS.
            
            SELECT INDUSTRY-RISK-FILE ASSIGN TO INDFILE
@@ -73,7 +73,6 @@
        DATA DIVISION.
        FILE SECTION.
        FD INPUT-FILE.
-       01 INPUT-RECORD.
           05 CLAIM-ID               PIC X(12).
           05 FILLER                 PIC X VALUE ','.
           05 POLICY-NUMBER          PIC X(10).
@@ -84,13 +83,13 @@
           05 FILLER                 PIC X VALUE ','.
           05 CLAIM-STATUS           PIC X(1).
           05 FILLER                 PIC X VALUE ','.
-          05 CLAIM-AMOUNT           PIC 9(8)V99).
+          05 CLAIM-AMOUNT           PIC 9(8)V99.
           05 FILLER                 PIC X VALUE ','.
           05 INSURED-AGE            PIC 9(3).
           05 FILLER                 PIC X VALUE ','.
           05 YEARS-EMPLOYED         PIC 9(2).
           05 FILLER                 PIC X VALUE ','.
-          05 ANNUAL-SALARY          PIC 9(7)V99).
+          05 ANNUAL-SALARY          PIC 9(7)V99.
           05 FILLER                 PIC X VALUE ','.
           05 OCCUPATION-CODE        PIC X(4).
           05 FILLER                 PIC X VALUE ','.
@@ -100,7 +99,7 @@
           05 FILLER                 PIC X VALUE ','.
           05 ACCIDENT-SEVERITY      PIC X(1).
           05 FILLER                 PIC X VALUE ','.
-          05 DIRECT-COSTS           PIC 9(7)V99).
+          05 DIRECT-COSTS           PIC 9(7)V99.
           05 FILLER                 PIC X VALUE ','.
           05 INDUSTRY-CODE          PIC X(4).
           05 FILLER                 PIC X VALUE ','.
@@ -466,7 +465,7 @@
            UNSTRING INPUT-RECORD DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
-                    WS-ACC-DATE
+                    WS-ACC-DATE OF WS-INSURED-DETAILS
                     WS-CLAIM-TYPE
                     WS-CLAIM-STAT
                     WS-CLAIM-AMT
@@ -475,8 +474,8 @@
                     WS-ANNUAL-SALARY
                     WS-OCCUPATION-CODE
                     WS-JOB-RISK-LEVEL
-                    WS-DISABILITY
-                    WS-SEVERITY
+                    WS-DISABILITY OF WS-INSURED-DETAILS
+                    WS-SEVERITY OF WS-INSURED-DETAILS
                     WS-DIRECT-COST
                     WS-INDUSTRY
                     WS-GEO-REGION
@@ -567,7 +566,7 @@
       * Calculate base percentage based on disability percentage
       * using actuarial formula based on GLM principles
            compute ws-base-pct = ws-min-pension-pct + 
-                               (ws-disability-pct * 0.5) +
+                               (ws-disability OF WS-INSURED-DETAILS * 0.5) +
                                ((ws-disability-pct * ws-disability-pct) 
                                                               / 200).
            
@@ -589,8 +588,8 @@
                    PERFORM 900-TERMINATION
            END-READ.
            
-           MOVE INDUSTRY-CODE OF POLICY-RECORD TO WS-INDUSTRY-CODE.
-           MOVE GEO-REGION-CODE OF POLICY-RECORD TO WS-GEO-REGION-CODE.
+           MOVE INDUSTRY-CODE OF POLICY-RECORD TO WS-INDUSTRY OF WS-INSURED-DETAILS.
+           MOVE GEO-REGION-CODE OF POLICY-RECORD TO WS-GEO-REGION OF WS-INSURED-DETAILS.
            MOVE EMR-VALUE OF POLICY-RECORD TO WS-EMR-FACTOR.
            MOVE SAFETY-PROG-RATING OF POLICY-RECORD TO WS-SAFETY-FACTOR.
 
@@ -631,7 +630,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS SECTION.
+       250-CALCULATE-COSTS.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
@@ -786,7 +785,7 @@
            MOVE 'CONSTRUCTION'      TO WS-D-INDUSTRY.
            MOVE WS-EMR-FACTOR       TO WS-D-EMR.
            
-           EVALUATE WS-ACCIDENT-SEVERITY
+           EVALUATE WS-SEVERITY OF WS-INSURED-DETAILS
                WHEN 'M'
                    MOVE 'MINOR'     TO WS-D-SEVERITY
                WHEN 'O'
