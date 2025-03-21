@@ -462,7 +462,7 @@
       * 4. Load industry and geographic risk factors                  *
       * 5. Perform actuarial calculations                             *
       *----------------------------------------------------------------*
-           UNSTRING INPUT-RECORD DELIMITED BY ','
+           UNSTRING INPUT-RECORD IN FILE SECTION DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
                     WS-ACC-DATE OF WS-INSURED-DETAILS
