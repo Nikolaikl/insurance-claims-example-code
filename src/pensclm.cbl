@@ -84,13 +84,7 @@
           05 SAFETY-PROG-RATING    PIC 9(1).
        
        FD CLAIM-FILE.
-       01 CLAIM-RECORD.
-          05 CLAIM-ID              PIC X(12).
-          05 POLICY-NUMBER         PIC X(10).
-          05 CLAIM-DATE            PIC 9(8).
-          05 CLAIM-TYPE            PIC X(2).
-          05 CLAIM-STATUS          PIC X(1).
-          05 CLAIM-AMOUNT          PIC 9(8)V99.
+       01 CLAIM-RECORD             PIC X(200).
        
        FD INDUSTRY-RISK-FILE.
        01 INDUSTRY-RISK-RECORD.
