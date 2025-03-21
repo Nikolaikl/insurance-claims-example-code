@@ -96,8 +96,8 @@
                               WS-JOB-RISK-LEVEL ',' WS-DISABILITY-PCT ','
                               WS-ACCIDENT-SEVERITY ',' WS-DIRECT-COSTS ','
                               WS-INDUSTRY-CODE ',' WS-GEO-REGION-CODE
-                              DELIMITED BY SIZE
-                              INTO OUTPUT-RECORD
+                       DELIMITED BY SIZE
+                       INTO OUTPUT-RECORD
                        WRITE OUTPUT-RECORD
                END-READ
            END-PERFORM.
