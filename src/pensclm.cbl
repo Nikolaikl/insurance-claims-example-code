@@ -463,7 +463,7 @@
       * 4. Load industry and geographic risk factors                  *
       * 5. Perform actuarial calculations                             *
       *----------------------------------------------------------------*
-           UNSTRING INPUT-RECORD OF FILE SECTION DELIMITED BY ','
+           UNSTRING INPUT-RECORD DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
                     WS-ACC-DATE OF WS-INSURED-DETAILS
@@ -632,7 +632,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS.
+       250-CALCULATE-COSTS SECTION.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
