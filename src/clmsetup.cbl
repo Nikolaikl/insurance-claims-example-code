@@ -75,8 +75,8 @@
        01 WS-END-OF-FILE          PIC X VALUE 'N'.
            88 EOF                 VALUE 'Y'.
            
-       01 WS-INPUT-STATUS         PIC 99.
-       01 WS-OUTPUT-STATUS        PIC 99.
+       01 WS-INPUT-STATUS         PIC 99 VALUE 0.
+       01 WS-OUTPUT-STATUS        PIC 99 VALUE 0.
        01 WS-INDUSTRY-STATUS      PIC 99 VALUE 0.
        
        PROCEDURE DIVISION.
