@@ -8,69 +8,101 @@
        CONFIGURATION SECTION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT CLAIM-FILE ASSIGN TO "CLMFILE"
-           ORGANIZATION IS INDEXED
-           ACCESS MODE IS SEQUENTIAL
-           RECORD KEY IS CLAIM-ID
-           FILE STATUS IS CLM-STATUS.
+           SELECT INPUT-FILE ASSIGN TO "INPUT.txt"
+           ORGANIZATION IS LINE SEQUENTIAL.
+           
+           SELECT OUTPUT-FILE ASSIGN TO "OUTPUT.txt"
+           ORGANIZATION IS LINE SEQUENTIAL.
        
        DATA DIVISION.
        FILE SECTION.
-       FD CLAIM-FILE.
-       01 CLAIM-RECORD.
-          05 CLAIM-ID              PIC X(12).
-          05 POLICY-NUMBER         PIC X(10).
-          05 CLAIM-DATE            PIC 9(8).
-          05 CLAIM-TYPE            PIC X(2).
-          05 CLAIM-STATUS          PIC X(1).
-          05 CLAIM-AMOUNT          PIC 9(8)V99.
+       FD INPUT-FILE.
+       01 INPUT-RECORD             PIC X(200).
+       
+       FD OUTPUT-FILE.
+       01 OUTPUT-RECORD            PIC X(200).
+       
+       WORKING-STORAGE SECTION.
+       01 WS-INPUT-FIELDS.
+          05 WS-CLAIM-ID           PIC X(12).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-POLICY-NUMBER      PIC X(10).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-CLAIM-DATE         PIC 9(8).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-CLAIM-TYPE         PIC X(2).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-CLAIM-STATUS       PIC X(1).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-CLAIM-AMOUNT       PIC 9(8)V99.
+          05 FILLER                PIC X VALUE ','.
+          05 WS-INSURED-AGE        PIC 9(3).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-YEARS-EMPLOYED    PIC 9(2).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-ANNUAL-SALARY      PIC 9(7)V99.
+          05 FILLER                PIC X VALUE ','.
+          05 WS-OCCUPATION-CODE    PIC X(4).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-JOB-RISK-LEVEL     PIC 9(1).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-DISABILITY-PCT     PIC 9(3).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-ACCIDENT-SEVERITY  PIC X(1).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-DIRECT-COSTS       PIC 9(7)V99.
+          05 FILLER                PIC X VALUE ','.
+          05 WS-INDUSTRY-CODE      PIC X(4).
+          05 FILLER                PIC X VALUE ','.
+          05 WS-GEO-REGION-CODE    PIC X(3).
        
        WORKING-STORAGE SECTION.
        01 CLM-STATUS               PIC X(2).
        
        PROCEDURE DIVISION.
-           OPEN OUTPUT CLAIM-FILE.
+           OPEN INPUT INPUT-FILE
+                OUTPUT OUTPUT-FILE.
            
-           IF CLM-STATUS NOT = '00'
-              DISPLAY 'ERROR OPENING CLAIM FILE: ' CLM-STATUS
-              STOP RUN
-           END-IF.
+           PERFORM UNTIL WS-END-OF-FILE = 'Y'
+               READ INPUT-FILE
+                   AT END
+                       MOVE 'Y' TO WS-END-OF-FILE
+                   NOT AT END
+                       UNSTRING INPUT-RECORD DELIMITED BY ','
+                           INTO WS-CLAIM-ID
+                                WS-POLICY-NUMBER
+                                WS-CLAIM-DATE
+                                WS-CLAIM-TYPE
+                                WS-CLAIM-STATUS
+                                WS-CLAIM-AMOUNT
+                                WS-INSURED-AGE
+                                WS-YEARS-EMPLOYED
+                                WS-ANNUAL-SALARY
+                                WS-OCCUPATION-CODE
+                                WS-JOB-RISK-LEVEL
+                                WS-DISABILITY-PCT
+                                WS-ACCIDENT-SEVERITY
+                                WS-DIRECT-COSTS
+                                WS-INDUSTRY-CODE
+                                WS-GEO-REGION-CODE
+                       
+                       * Perform calculations (you'll need to add this logic)
+                       * For now, just write the input to output
+                       STRING WS-CLAIM-ID ',' WS-POLICY-NUMBER ','
+                              WS-CLAIM-DATE ',' WS-CLAIM-TYPE ','
+                              WS-CLAIM-STATUS ',' WS-CLAIM-AMOUNT ','
+                              WS-INSURED-AGE ',' WS-YEARS-EMPLOYED ','
+                              WS-ANNUAL-SALARY ',' WS-OCCUPATION-CODE ','
+                              WS-JOB-RISK-LEVEL ',' WS-DISABILITY-PCT ','
+                              WS-ACCIDENT-SEVERITY ',' WS-DIRECT-COSTS ','
+                              WS-INDUSTRY-CODE ',' WS-GEO-REGION-CODE
+                              INTO OUTPUT-RECORD
+                       WRITE OUTPUT-RECORD
+               END-READ
+           END-PERFORM.
            
-      * ADD SAMPLE CLAIM RECORDS
+           CLOSE INPUT-FILE
+                 OUTPUT-FILE.
            
-      * Claim 1 - Severe accident for construction policy
-           MOVE 'CLM123456789' TO CLAIM-ID.
-           MOVE 'POL7890123' TO POLICY-NUMBER.
-           MOVE 20230615 TO CLAIM-DATE.
-           MOVE 'WA' TO CLAIM-TYPE.
-           MOVE 'P' TO CLAIM-STATUS.
-           MOVE 00024500.00 TO CLAIM-AMOUNT.
-           
-           WRITE CLAIM-RECORD.
-           DISPLAY 'CLAIM RECORD 1 WRITTEN: ' CLAIM-ID.
-           
-      * Claim 2 - Minor accident for manufacturing policy  
-           MOVE 'CLM123456790' TO CLAIM-ID.
-           MOVE 'POL7890124' TO POLICY-NUMBER.
-           MOVE 20230720 TO CLAIM-DATE.
-           MOVE 'WA' TO CLAIM-TYPE.
-           MOVE 'P' TO CLAIM-STATUS.
-           MOVE 00012800.00 TO CLAIM-AMOUNT.
-           
-           WRITE CLAIM-RECORD.
-           DISPLAY 'CLAIM RECORD 2 WRITTEN: ' CLAIM-ID.
-           
-      * Claim 3 - Moderate accident for office policy
-           MOVE 'CLM123456791' TO CLAIM-ID.
-           MOVE 'POL7890125' TO POLICY-NUMBER.
-           MOVE 20230810 TO CLAIM-DATE.
-           MOVE 'WA' TO CLAIM-TYPE.
-           MOVE 'P' TO CLAIM-STATUS.
-           MOVE 00008750.00 TO CLAIM-AMOUNT.
-           
-           WRITE CLAIM-RECORD.
-           DISPLAY 'CLAIM RECORD 3 WRITTEN: ' CLAIM-ID.
-           
-           CLOSE CLAIM-FILE.
-           DISPLAY 'CLAIM FILE CREATED SUCCESSFULLY'.
+           DISPLAY 'CLAIM PROCESSING COMPLETE'.
            STOP RUN.
