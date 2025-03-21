@@ -62,8 +62,8 @@
            RECORD KEY IS GEO-REGION-CODE OF GEO-FACTOR-RECORD
            FILE STATUS IS WS-GEO-STATUS.
            
-           SELECT CLAIM-REPORT ASSIGN TO PRINTER
-           ORGANIZATION IS SEQUENTIAL
+           SELECT CLAIM-REPORT ASSIGN TO 'OUTPUT.txt'
+           ORGANIZATION IS LINE SEQUENTIAL
            FILE STATUS IS WS-REPORT-STATUS.
        
        DATA DIVISION.
@@ -106,6 +106,8 @@
        
        FD CLAIM-REPORT.
        01 REPORT-LINE              PIC X(132).
+          05 FILLER                PIC X(80).
+          05 FILLER                PIC X(52).
        
        WORKING-STORAGE SECTION.
       *----------------------------------------------------------------*
@@ -312,6 +314,12 @@
                       INDUSTRY-RISK-FILE
                       GEO-FACTOR-FILE
                 OUTPUT CLAIM-REPORT.
+           
+           * Initialize output file with header
+           MOVE 'PENSION CLAIM CALCULATION REPORT' TO REPORT-LINE
+           WRITE REPORT-LINE AFTER ADVANCING PAGE
+           MOVE SPACES TO REPORT-LINE
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE
                 
       * Try to open CLAIM-FILE as input first
            OPEN INPUT CLAIM-FILE.
@@ -642,42 +650,42 @@
            
       * Write report lines
            MOVE WS-HEADING-1        TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 2 LINES.
            MOVE SPACES              TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
            MOVE WS-HEADING-2        TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE SPACES              TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
            MOVE WS-DETAIL-1         TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE WS-DETAIL-2         TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE WS-DETAIL-3         TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE SPACES              TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
            MOVE WS-FACTORS-LINE-1   TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE WS-FACTORS-LINE-2   TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE SPACES              TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
            MOVE WS-RESULT-LINE-1    TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE WS-RESULT-LINE-2    TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE SPACES              TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
            MOVE WS-FINAL-LINE-1     TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            MOVE WS-FINAL-LINE-2     TO REPORT-LINE.
-           WRITE REPORT-LINE.
+           WRITE REPORT-LINE AFTER ADVANCING 1 LINE.
            
        900-TERMINATION.
       *----------------------------------------------------------------*
