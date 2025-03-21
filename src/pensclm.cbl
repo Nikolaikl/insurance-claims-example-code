@@ -309,10 +309,18 @@
                       WS-CALCULATION-RESULTS.
            
            OPEN INPUT POLICY-FILE
-                      CLAIM-FILE
                       INDUSTRY-RISK-FILE
                       GEO-FACTOR-FILE
                 OUTPUT CLAIM-REPORT.
+                
+      * Try to open CLAIM-FILE as input first
+           OPEN INPUT CLAIM-FILE.
+           IF WS-CLAIM-STATUS NOT = '00'
+              DISPLAY 'CLAIM FILE NOT FOUND, CREATING NEW FILE'
+              OPEN OUTPUT CLAIM-FILE
+              CLOSE CLAIM-FILE
+              OPEN INPUT CLAIM-FILE
+           END-IF.
                 
            IF WS-POLICY-STATUS NOT = '00'
               DISPLAY 'ERROR OPENING POLICY FILE: ' WS-POLICY-STATUS
