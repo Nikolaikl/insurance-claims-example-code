@@ -29,8 +29,12 @@ SETUP_BINS = $(BIN_DIR)/polsetup $(BIN_DIR)/clmsetup \
              $(BIN_DIR)/indsetup $(BIN_DIR)/geosetup
 MAIN_BIN = $(BIN_DIR)/pensclm
 
+# Create bin directory if it doesn't exist
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
 # Default target
-all: setup pensclm
+all: $(BIN_DIR) setup pensclm
 
 # Build setup programs
 setup: $(SETUP_BINS)
