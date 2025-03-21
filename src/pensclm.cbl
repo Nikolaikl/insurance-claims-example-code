@@ -654,6 +654,7 @@
            PERFORM 230-CALCULATE-FINAL-FACTOR.
            PERFORM 240-CALCULATE-PENSION.
            PERFORM 250-CALCULATE-PRESENT-VALUE.
+       220-CALCULATE-TREND-FACTORS.
       *----------------------------------------------------------------*
       * TREND FACTOR CALCULATIONS:                                     *
       * 1. Frequency Trend: Accounts for declining claim frequency    *
