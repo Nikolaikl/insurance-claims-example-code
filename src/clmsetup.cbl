@@ -91,7 +91,7 @@
                STOP RUN.
            
            OPEN INPUT INDUSTRY-FILE.
-           IF WS-INDUSTRY-STATUS NOT = 00
+           IF WS-INDUSTRY-STATUS NOT = "00"
                DISPLAY "ERROR OPENING INDUSTRY FILE: " WS-INDUSTRY-STATUS
                STOP RUN.
            
