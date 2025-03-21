@@ -37,7 +37,11 @@
       * - INDUSTRY-RISK-FILE: Contains industry-specific risk factors  *
       * - GEO-FACTOR-FILE: Stores geographic risk adjustment factors   *
       * - CLAIM-REPORT: Output report file for claim calculations      *
+      * - INPUT-FILE: Input file containing claim records              *
       *----------------------------------------------------------------*
+           SELECT INPUT-FILE ASSIGN TO "INPUT.txt"
+           ORGANIZATION IS LINE SEQUENTIAL
+           FILE STATUS IS WS-INPUT-STATUS.
            SELECT POLICY-FILE ASSIGN TO POLFILE
            ORGANIZATION IS INDEXED
            ACCESS MODE IS RANDOM
@@ -159,6 +163,7 @@
           05 WS-INDUSTRY-STATUS    PIC X(2).
           05 WS-GEO-STATUS         PIC X(2).
           05 WS-REPORT-STATUS      PIC X(2).
+          05 WS-INPUT-STATUS       PIC X(2).
           
        01 WS-SWITCHES.
           05 END-OF-FILE-SW        PIC X(1) VALUE 'N'.
@@ -170,6 +175,17 @@
           05 WS-ANNUAL-SALARY      PIC 9(7)V99.
           05 WS-OCCUPATION-CODE    PIC X(4).
           05 WS-JOB-RISK-LEVEL     PIC 9(1).
+          05 WS-CLAIM-ID           PIC X(12).
+          05 WS-POLICY-NUMBER      PIC X(10).
+          05 WS-ACCIDENT-DATE      PIC 9(8).
+          05 WS-CLAIM-TYPE         PIC X(2).
+          05 WS-CLAIM-STATUS       PIC X(1).
+          05 WS-CLAIM-AMOUNT       PIC 9(8)V99.
+          05 WS-DISABILITY-PCT     PIC 9(3).
+          05 WS-ACCIDENT-SEVERITY  PIC X(1).
+          05 WS-DIRECT-COSTS       PIC 9(7)V99.
+          05 WS-INDUSTRY-CODE      PIC X(4).
+          05 WS-GEO-REGION-CODE    PIC X(3).
              88 LOW-RISK           VALUE 1.
              88 MEDIUM-RISK        VALUE 2.
              88 HIGH-RISK          VALUE 3.
@@ -345,6 +361,7 @@
            OPEN INPUT POLICY-FILE
                       INDUSTRY-RISK-FILE
                       GEO-FACTOR-FILE
+                      INPUT-FILE
                 OUTPUT CLAIM-REPORT.
            
            *> Initialize output file with header
@@ -525,7 +542,84 @@
                MOVE WS-MAX-PENSION-PCT TO WS-BASE-PCT
            END-IF.
            
-       220-CALCULATE-TREND-FACTORS.
+       220-LOAD-POLICY-DATA.
+      *----------------------------------------------------------------*
+      * LOAD POLICY DATA SECTION:                                      *
+      * 1. Read policy record using policy number                     *
+      * 2. Store relevant policy data in working storage              *
+      *----------------------------------------------------------------*
+           MOVE WS-POLICY-NUMBER TO POLICY-NUMBER OF POLICY-RECORD.
+           READ POLICY-FILE
+               INVALID KEY
+                   DISPLAY 'POLICY NOT FOUND: ' WS-POLICY-NUMBER
+                   PERFORM 900-TERMINATION
+           END-READ.
+           
+           MOVE INDUSTRY-CODE OF POLICY-RECORD TO WS-INDUSTRY-CODE.
+           MOVE GEO-REGION-CODE OF POLICY-RECORD TO WS-GEO-REGION-CODE.
+           MOVE EMR-VALUE OF POLICY-RECORD TO WS-EMR-FACTOR.
+           MOVE SAFETY-PROG-RATING OF POLICY-RECORD TO WS-SAFETY-FACTOR.
+
+       230-LOAD-INDUSTRY-DATA.
+      *----------------------------------------------------------------*
+      * LOAD INDUSTRY DATA SECTION:                                    *
+      * 1. Read industry risk record using industry code              *
+      * 2. Store industry risk factors in working storage             *
+      *----------------------------------------------------------------*
+           MOVE WS-INDUSTRY-CODE TO INDUSTRY-CODE OF INDUSTRY-RISK-RECORD.
+           READ INDUSTRY-RISK-FILE
+               INVALID KEY
+                   DISPLAY 'INDUSTRY NOT FOUND: ' WS-INDUSTRY-CODE
+                   PERFORM 900-TERMINATION
+           END-READ.
+           
+           MOVE INDUSTRY-RISK-FACTOR OF INDUSTRY-RISK-RECORD 
+               TO WS-INDUSTRY-FACTOR.
+           MOVE FREQUENCY-FACTOR OF INDUSTRY-RISK-RECORD 
+               TO WS-FREQ-TREND-FACTOR.
+           MOVE SEVERITY-FACTOR OF INDUSTRY-RISK-RECORD 
+               TO WS-SEV-TREND-FACTOR.
+
+       240-LOAD-GEO-DATA.
+      *----------------------------------------------------------------*
+      * LOAD GEOGRAPHIC DATA SECTION:                                  *
+      * 1. Read geographic factor record using region code            *
+      * 2. Store geographic factors in working storage                *
+      *----------------------------------------------------------------*
+           MOVE WS-GEO-REGION-CODE TO GEO-REGION-CODE OF GEO-FACTOR-RECORD.
+           READ GEO-FACTOR-FILE
+               INVALID KEY
+                   DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION-CODE
+                   PERFORM 900-TERMINATION
+           END-READ.
+           
+           MOVE REGIONAL-FACTOR OF GEO-FACTOR-RECORD TO WS-GEO-FACTOR.
+           MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
+           MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
+
+       250-CALCULATE-COSTS.
+      *----------------------------------------------------------------*
+      * COST CALCULATION SECTION:                                      *
+      * 1. Calculate indirect costs (1.5x direct costs)               *
+      * 2. Calculate total costs                                      *
+      *----------------------------------------------------------------*
+           COMPUTE WS-INDIRECT-COSTS = WS-DIRECT-COSTS * 1.5.
+           COMPUTE WS-TOTAL-COSTS = WS-DIRECT-COSTS + WS-INDIRECT-COSTS.
+
+       260-PERFORM-CALCULATIONS.
+      *----------------------------------------------------------------*
+      * MAIN CALCULATION SECTION:                                      *
+      * 1. Calculate base factors                                     *
+      * 2. Calculate trend factors                                    *
+      * 3. Calculate final factor                                     *
+      * 4. Calculate pension amounts                                  *
+      * 5. Calculate present value                                    *
+      *----------------------------------------------------------------*
+           PERFORM 210-CALCULATE-BASE-FACTORS.
+           PERFORM 220-CALCULATE-TREND-FACTORS.
+           PERFORM 230-CALCULATE-FINAL-FACTOR.
+           PERFORM 240-CALCULATE-PENSION.
+           PERFORM 250-CALCULATE-PRESENT-VALUE.
       *----------------------------------------------------------------*
       * TREND FACTOR CALCULATIONS:                                     *
       * 1. Frequency Trend: Accounts for declining claim frequency    *
@@ -741,6 +835,7 @@
                  CLAIM-FILE
                  INDUSTRY-RISK-FILE
                  GEO-FACTOR-FILE
-                 CLAIM-REPORT.
+                 CLAIM-REPORT
+                 INPUT-FILE.
            
            STOP RUN.
