@@ -569,7 +569,7 @@
            COMPUTE WS-BASE-PCT = WS-MIN-PENSION-PCT 
                              + (WS-DISABILITY OF WS-INSURED-DETAILS * 0.5)
                              + (WS-DISABILITY OF WS-INSURED-DETAILS 
-                              * WS-DISABILITY OF WS-INSURED-DETAILS / 200)
+                              * (WS-DISABILITY OF WS-INSURED-DETAILS / 200))
            END-COMPUTE
            
       * Ensure the base percentage doesn't exceed maximum
