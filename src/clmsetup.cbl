@@ -30,6 +30,14 @@
        FD OUTPUT-FILE.
        01 OUTPUT-RECORD            PIC X(200).
        
+       FD INDUSTRY-FILE.
+       01 INDUSTRY-RECORD.
+          05 INDUSTRY-CODE        PIC X(4).
+          05 INDUSTRY-DESCRIPTION PIC X(30).
+          05 INDUSTRY-RISK-FACTOR PIC 9V999.
+          05 FREQUENCY-FACTOR    PIC 9V999.
+          05 SEVERITY-FACTOR      PIC 9V999.
+       
        WORKING-STORAGE SECTION.
        01 WS-INPUT-FIELDS.
           05 WS-CLAIM-ID           PIC X(12).
@@ -70,13 +78,6 @@
        01 WS-INPUT-STATUS         PIC 99.
        01 WS-OUTPUT-STATUS        PIC 99.
        01 WS-INDUSTRY-STATUS      PIC 99.
-       
-       01 INDUSTRY-RECORD.
-          05 INDUSTRY-CODE        PIC X(4).
-          05 INDUSTRY-DESCRIPTION PIC X(30).
-          05 INDUSTRY-RISK-FACTOR PIC 9V999.
-          05 FREQUENCY-FACTOR    PIC 9V999.
-          05 SEVERITY-FACTOR      PIC 9V999.
        
        PROCEDURE DIVISION.
            OPEN INPUT INPUT-FILE.
