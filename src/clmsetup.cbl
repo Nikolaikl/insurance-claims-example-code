@@ -88,16 +88,16 @@
                        
       *> Perform calculations (you'll need to add this logic)
       *> For now, just write the input to output
-                       STRING WS-CLAIM-ID ',' WS-POLICY-NUMBER ','
-                              WS-CLAIM-DATE ',' WS-CLAIM-TYPE ','
-                              WS-CLAIM-STATUS ',' WS-CLAIM-AMOUNT ','
-                              WS-INSURED-AGE ',' WS-YEARS-EMPLOYED ','
-                              WS-ANNUAL-SALARY ',' WS-OCCUPATION-CODE ','
-                              WS-JOB-RISK-LEVEL ',' WS-DISABILITY-PCT ','
-                              WS-ACCIDENT-SEVERITY ',' WS-DIRECT-COSTS ','
-                              WS-INDUSTRY-CODE ',' WS-GEO-REGION-CODE
-                       DELIMITED BY SIZE
-                       INTO OUTPUT-RECORD
+           STRING WS-CLAIM-ID ',' WS-POLICY-NUMBER ','
+                  WS-CLAIM-DATE ',' WS-CLAIM-TYPE ','
+                  WS-CLAIM-STATUS ',' WS-CLAIM-AMOUNT ','
+                  WS-INSURED-AGE ',' WS-YEARS-EMPLOYED ','
+                  WS-ANNUAL-SALARY ',' WS-OCCUPATION-CODE ','
+                  WS-JOB-RISK-LEVEL ',' WS-DISABILITY-PCT ','
+                  WS-ACCIDENT-SEVERITY ',' WS-DIRECT-COSTS ','
+                  WS-INDUSTRY-CODE ',' WS-GEO-REGION-CODE
+                  DELIMITED BY SIZE
+                  INTO OUTPUT-RECORD
                        WRITE OUTPUT-RECORD
                END-READ
            END-PERFORM.
