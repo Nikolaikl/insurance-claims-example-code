@@ -567,7 +567,8 @@
       * using actuarial formula based on GLM principles
            compute ws-base-pct = ws-min-pension-pct + 
                                (ws-disability OF WS-INSURED-DETAILS * 0.5) +
-                               ((ws-disability-pct * ws-disability-pct) 
+                               ((ws-disability OF WS-INSURED-DETAILS * 
+                                ws-disability OF WS-INSURED-DETAILS) 
                                                               / 200).
            
       * Ensure the base percentage doesn't exceed maximum
