@@ -121,6 +121,38 @@
       * - WS-ACTUARIAL-CONSTANTS: Fixed values for calculations       *
       * - Report line definitions for output formatting               *
       *----------------------------------------------------------------*
+       01 INPUT-RECORD.
+          05 CLAIM-ID               PIC X(12).
+          05 FILLER                 PIC X VALUE ','.
+          05 POLICY-NUMBER          PIC X(10).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-DATE             PIC 9(8).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-TYPE             PIC X(2).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-STATUS           PIC X(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-AMOUNT           PIC 9(8)V99.
+          05 FILLER                 PIC X VALUE ','.
+          05 INSURED-AGE            PIC 9(3).
+          05 FILLER                 PIC X VALUE ','.
+          05 YEARS-EMPLOYED         PIC 9(2).
+          05 FILLER                 PIC X VALUE ','.
+          05 ANNUAL-SALARY          PIC 9(7)V99.
+          05 FILLER                 PIC X VALUE ','.
+          05 OCCUPATION-CODE        PIC X(4).
+          05 FILLER                 PIC X VALUE ','.
+          05 JOB-RISK-LEVEL         PIC 9(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 DISABILITY-PCT         PIC 9(3).
+          05 FILLER                 PIC X VALUE ','.
+          05 ACCIDENT-SEVERITY      PIC X(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 DIRECT-COSTS           PIC 9(7)V99.
+          05 FILLER                 PIC X VALUE ','.
+          05 INDUSTRY-CODE          PIC X(4).
+          05 FILLER                 PIC X VALUE ','.
+          05 GEO-REGION-CODE        PIC X(3).
        01 WS-FILE-STATUS.
           05 WS-POLICY-STATUS      PIC X(2).
           05 WS-CLAIM-STATUS       PIC X(2).
@@ -358,55 +390,62 @@
        200-PROCESS-CLAIM.
       *----------------------------------------------------------------*
       * CLAIM PROCESSING SECTION:                                      *
-      * 1. Load insured and accident details                          *
-      * 2. Calculate direct and indirect costs                        *
-      * 3. Load industry and geographic risk factors                  *
-      * 4. Perform actuarial calculations:                            *
-      *    - Base factors (age, service, severity)                    *
-      *    - Trend factors (frequency, severity)                      *
-      *    - Final adjustment factor                                  *
-      *    - Pension amount calculations                              *
-      *    - Present value calculation                                *
+      * 1. Read each claim from INPUT.txt                             *
+      * 2. Process each claim through calculations                    *
+      * 3. Generate report for each claim                             *
       *----------------------------------------------------------------*
+           PERFORM UNTIL END-OF-FILE
+               READ INPUT-FILE
+                   AT END
+                       SET END-OF-FILE TO TRUE
+                   NOT AT END
+                       PERFORM 210-PROCESS-CLAIM-RECORD
+               END-READ
+           END-PERFORM.
+           
+       210-PROCESS-CLAIM-RECORD.
+      *----------------------------------------------------------------*
+      * PROCESS INDIVIDUAL CLAIM RECORD:                               *
+      * 1. Parse input record                                          *
+      * 2. Load insured and accident details                          *
+      * 3. Calculate direct and indirect costs                        *
+      * 4. Load industry and geographic risk factors                  *
+      * 5. Perform actuarial calculations                             *
+      *----------------------------------------------------------------*
+           UNSTRING INPUT-RECORD DELIMITED BY ','
+               INTO WS-CLAIM-ID
+                    WS-POLICY-NUMBER
+                    WS-ACCIDENT-DATE
+                    WS-CLAIM-TYPE
+                    WS-CLAIM-STATUS
+                    WS-CLAIM-AMOUNT
+                    WS-INSURED-AGE
+                    WS-YEARS-EMPLOYED
+                    WS-ANNUAL-SALARY
+                    WS-OCCUPATION-CODE
+                    WS-JOB-RISK-LEVEL
+                    WS-DISABILITY-PCT
+                    WS-ACCIDENT-SEVERITY
+                    WS-DIRECT-COSTS
+                    WS-INDUSTRY-CODE
+                    WS-GEO-REGION-CODE
+           END-UNSTRING.
+           
+           PERFORM 220-LOAD-POLICY-DATA.
+           PERFORM 230-LOAD-INDUSTRY-DATA.
+           PERFORM 240-LOAD-GEO-DATA.
+           PERFORM 250-CALCULATE-COSTS.
+           PERFORM 260-PERFORM-CALCULATIONS.
+           PERFORM 300-GENERATE-REPORT.
       *  This here's where the magic happens, kiddo! Back when I       *
       *  wrote this, we didn't have no fancy "machine learning" or     *
       *  "AI". Just good ol' fashioned math and a slide rule!          *
       *  These calculations have stood the test of time, like a        *
       *  fine whiskey aging in a oak barrel.                          *
       *----------------------------------------------------------------*
-      * For this example, we're using hardcoded values                 *
-      * In a real application, these would come from user input        *
-      * or database records                                            *
-      *----------------------------------------------------------------*
-           MOVE 45                   TO WS-INSURED-AGE.
-           MOVE 15                   TO WS-YEARS-EMPLOYED.
-           MOVE 60000.00             TO WS-ANNUAL-SALARY.
-           MOVE 'CONS'               TO WS-OCCUPATION-CODE.
-           MOVE 3                    TO WS-JOB-RISK-LEVEL.
-           MOVE 20230615             TO WS-ACCIDENT-DATE.
-           MOVE 40                   TO WS-DISABILITY-PCT.
-           MOVE 'S'                  TO WS-ACCIDENT-SEVERITY.
-           MOVE 24500.00             TO WS-DIRECT-COSTS.
            
-      * Calculate indirect costs (typically 1.5x direct costs)
-           COMPUTE WS-INDIRECT-COSTS = WS-DIRECT-COSTS * 
-                                      WS-INDIRECT-COST-MULT.
-           COMPUTE WS-TOTAL-COSTS = WS-DIRECT-COSTS + WS-INDIRECT-COSTS.
            
-      * Read industry risk data, policy data for EMR and safety program
-      * Here represented as hardcoded values for demonstration:
-           MOVE 1.325                TO WS-INDUSTRY-FACTOR.
-           MOVE 1.145                TO WS-EMR-FACTOR.
-           MOVE 0.940                TO WS-SAFETY-FACTOR.
-           MOVE 1.080                TO WS-GEO-FACTOR.
-           MOVE 1.025                TO WS-REG-FACTOR.
-           MOVE 0.980                TO WS-MARKET-COMP-FACTOR.
            
-           PERFORM 210-CALCULATE-BASE-FACTORS.
-           PERFORM 220-CALCULATE-TREND-FACTORS.
-           PERFORM 230-CALCULATE-FINAL-FACTOR.
-           PERFORM 240-CALCULATE-PENSION.
-           PERFORM 250-CALCULATE-PRESENT-VALUE.
            
        210-CALCULATE-BASE-FACTORS.
       *----------------------------------------------------------------*
