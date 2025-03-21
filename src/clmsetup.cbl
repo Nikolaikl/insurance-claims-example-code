@@ -77,7 +77,7 @@
            
        01 WS-INPUT-STATUS         PIC 99.
        01 WS-OUTPUT-STATUS        PIC 99.
-       01 WS-INDUSTRY-STATUS      PIC 99.
+       01 WS-INDUSTRY-STATUS      PIC 99 VALUE 0.
        
        PROCEDURE DIVISION.
            OPEN INPUT INPUT-FILE.
