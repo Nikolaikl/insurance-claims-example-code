@@ -72,6 +72,40 @@
        
        DATA DIVISION.
        FILE SECTION.
+       FD INPUT-FILE.
+       01 INPUT-RECORD.
+          05 CLAIM-ID               PIC X(12).
+          05 FILLER                 PIC X VALUE ','.
+          05 POLICY-NUMBER          PIC X(10).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-DATE             PIC 9(8).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-TYPE             PIC X(2).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-STATUS           PIC X(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 CLAIM-AMOUNT           PIC 9(8)V99).
+          05 FILLER                 PIC X VALUE ','.
+          05 INSURED-AGE            PIC 9(3).
+          05 FILLER                 PIC X VALUE ','.
+          05 YEARS-EMPLOYED         PIC 9(2).
+          05 FILLER                 PIC X VALUE ','.
+          05 ANNUAL-SALARY          PIC 9(7)V99).
+          05 FILLER                 PIC X VALUE ','.
+          05 OCCUPATION-CODE        PIC X(4).
+          05 FILLER                 PIC X VALUE ','.
+          05 JOB-RISK-LEVEL         PIC 9(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 DISABILITY-PCT         PIC 9(3).
+          05 FILLER                 PIC X VALUE ','.
+          05 ACCIDENT-SEVERITY      PIC X(1).
+          05 FILLER                 PIC X VALUE ','.
+          05 DIRECT-COSTS           PIC 9(7)V99).
+          05 FILLER                 PIC X VALUE ','.
+          05 INDUSTRY-CODE          PIC X(4).
+          05 FILLER                 PIC X VALUE ','.
+          05 GEO-REGION-CODE        PIC X(3).
+
        FD POLICY-FILE.
        01 POLICY-RECORD.
           05 POLICY-NUMBER         PIC X(10).
@@ -177,24 +211,24 @@
           05 WS-JOB-RISK-LEVEL     PIC 9(1).
           05 WS-CLAIM-ID           PIC X(12).
           05 WS-POLICY-NUMBER      PIC X(10).
-          05 WS-ACCIDENT-DATE      PIC 9(8).
+          05 WS-ACC-DATE           PIC 9(8).
           05 WS-CLAIM-TYPE         PIC X(2).
-          05 WS-CLAIM-STATUS       PIC X(1).
-          05 WS-CLAIM-AMOUNT       PIC 9(8)V99.
-          05 WS-DISABILITY-PCT     PIC 9(3).
-          05 WS-ACCIDENT-SEVERITY  PIC X(1).
-          05 WS-DIRECT-COSTS       PIC 9(7)V99.
-          05 WS-INDUSTRY-CODE      PIC X(4).
-          05 WS-GEO-REGION-CODE    PIC X(3).
+          05 WS-CLAIM-STAT         PIC X(1).
+          05 WS-CLAIM-AMT          PIC 9(8)V99.
+          05 WS-DISABILITY         PIC 9(3).
+          05 WS-SEVERITY           PIC X(1).
+          05 WS-DIRECT-COST        PIC 9(7)V99.
+          05 WS-INDUSTRY           PIC X(4).
+          05 WS-GEO-REGION         PIC X(3).
              88 LOW-RISK           VALUE 1.
              88 MEDIUM-RISK        VALUE 2.
              88 HIGH-RISK          VALUE 3.
              88 VERY-HIGH-RISK     VALUE 4.
           
        01 WS-ACCIDENT-DETAILS.
-          05 WS-ACCIDENT-DATE      PIC 9(8).
-          05 WS-DISABILITY-PCT     PIC 9(3).
-          05 WS-ACCIDENT-SEVERITY  PIC X(1).
+          05 WS-ACC-DATE           PIC 9(8).
+          05 WS-DISABILITY         PIC 9(3).
+          05 WS-SEVERITY           PIC X(1).
              88 MINOR              VALUE 'M'.
              88 MODERATE           VALUE 'O'.
              88 SEVERE             VALUE 'S'.
@@ -432,20 +466,20 @@
            UNSTRING INPUT-RECORD DELIMITED BY ','
                INTO WS-CLAIM-ID
                     WS-POLICY-NUMBER
-                    WS-ACCIDENT-DATE
+                    WS-ACC-DATE
                     WS-CLAIM-TYPE
-                    WS-CLAIM-STATUS
-                    WS-CLAIM-AMOUNT
+                    WS-CLAIM-STAT
+                    WS-CLAIM-AMT
                     WS-INSURED-AGE
                     WS-YEARS-EMPLOYED
                     WS-ANNUAL-SALARY
                     WS-OCCUPATION-CODE
                     WS-JOB-RISK-LEVEL
-                    WS-DISABILITY-PCT
-                    WS-ACCIDENT-SEVERITY
-                    WS-DIRECT-COSTS
-                    WS-INDUSTRY-CODE
-                    WS-GEO-REGION-CODE
+                    WS-DISABILITY
+                    WS-SEVERITY
+                    WS-DIRECT-COST
+                    WS-INDUSTRY
+                    WS-GEO-REGION
            END-UNSTRING.
            
            PERFORM 220-LOAD-POLICY-DATA.
@@ -566,7 +600,7 @@
       * 1. Read industry risk record using industry code              *
       * 2. Store industry risk factors in working storage             *
       *----------------------------------------------------------------*
-           MOVE WS-INDUSTRY-CODE TO INDUSTRY-CODE OF INDUSTRY-RISK-RECORD.
+           MOVE WS-INDUSTRY TO INDUSTRY-CODE OF INDUSTRY-RISK-RECORD.
            READ INDUSTRY-RISK-FILE
                INVALID KEY
                    DISPLAY 'INDUSTRY NOT FOUND: ' WS-INDUSTRY-CODE
@@ -586,7 +620,7 @@
       * 1. Read geographic factor record using region code            *
       * 2. Store geographic factors in working storage                *
       *----------------------------------------------------------------*
-           MOVE WS-GEO-REGION-CODE TO GEO-REGION-CODE OF GEO-FACTOR-RECORD.
+           MOVE WS-GEO-REGION TO GEO-REGION-CODE OF GEO-FACTOR-RECORD.
            READ GEO-FACTOR-FILE
                INVALID KEY
                    DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION-CODE
@@ -597,7 +631,7 @@
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
            MOVE WAGE-INDEX OF GEO-FACTOR-RECORD TO WS-MARKET-COMP-FACTOR.
 
-       250-CALCULATE-COSTS.
+       250-CALCULATE-COSTS SECTION.
       *----------------------------------------------------------------*
       * COST CALCULATION SECTION:                                      *
       * 1. Calculate indirect costs (1.5x direct costs)               *
