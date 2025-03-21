@@ -86,8 +86,8 @@
                                 WS-INDUSTRY-CODE
                                 WS-GEO-REGION-CODE
                        
-                       *> Perform calculations (you'll need to add this logic)
-                       *> For now, just write the input to output
+      *> Perform calculations (you'll need to add this logic)
+      *> For now, just write the input to output
                        STRING WS-CLAIM-ID ',' WS-POLICY-NUMBER ','
                               WS-CLAIM-DATE ',' WS-CLAIM-TYPE ','
                               WS-CLAIM-STATUS ',' WS-CLAIM-AMOUNT ','
