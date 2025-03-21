@@ -59,7 +59,10 @@ $(BIN_DIR)/pensclm: $(MAIN_SRC) $(SETUP_SRCS)
 	$(COBC) $(COBCFLAGS) -o $@ $(MAIN_SRC)
 
 # Run all programs in sequence
-run: all
+INDFILE:
+	touch INDFILE
+
+run: all INPUT.txt OUTPUT.txt INDFILE
 	@echo "Running setup programs..."
 	@for prog in $(SETUP_BINS); do \
 		echo "Running $$prog..."; \

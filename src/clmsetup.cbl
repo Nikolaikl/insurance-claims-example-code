@@ -9,10 +9,18 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT INPUT-FILE ASSIGN TO "INPUT.txt"
-           ORGANIZATION IS LINE SEQUENTIAL.
+           ORGANIZATION IS SEQUENTIAL
+           FILE STATUS IS WS-INPUT-STATUS.
            
            SELECT OUTPUT-FILE ASSIGN TO "OUTPUT.txt"
-           ORGANIZATION IS LINE SEQUENTIAL.
+           ORGANIZATION IS SEQUENTIAL
+           FILE STATUS IS WS-OUTPUT-STATUS.
+           
+           SELECT INDUSTRY-FILE ASSIGN TO "INDFILE"
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS DYNAMIC
+           RECORD KEY IS INDUSTRY-CODE
+           FILE STATUS IS WS-INDUSTRY-STATUS.
        
        DATA DIVISION.
        FILE SECTION.
@@ -58,10 +66,33 @@
        
        01 WS-END-OF-FILE          PIC X VALUE 'N'.
            88 EOF                 VALUE 'Y'.
+           
+       01 WS-INPUT-STATUS         PIC 99.
+       01 WS-OUTPUT-STATUS        PIC 99.
+       01 WS-INDUSTRY-STATUS      PIC 99.
+       
+       01 INDUSTRY-RECORD.
+          05 INDUSTRY-CODE        PIC X(4).
+          05 INDUSTRY-DESCRIPTION PIC X(30).
+          05 INDUSTRY-RISK-FACTOR PIC 9V999.
+          05 FREQUENCY-FACTOR    PIC 9V999.
+          05 SEVERITY-FACTOR      PIC 9V999.
        
        PROCEDURE DIVISION.
-           OPEN INPUT INPUT-FILE
-                OUTPUT OUTPUT-FILE.
+           OPEN INPUT INPUT-FILE.
+           IF WS-INPUT-STATUS NOT = 00
+               DISPLAY "ERROR OPENING INPUT FILE: " WS-INPUT-STATUS
+               STOP RUN.
+           
+           OPEN OUTPUT OUTPUT-FILE.
+           IF WS-OUTPUT-STATUS NOT = 00
+               DISPLAY "ERROR OPENING OUTPUT FILE: " WS-OUTPUT-STATUS
+               STOP RUN.
+           
+           OPEN INPUT INDUSTRY-FILE.
+           IF WS-INDUSTRY-STATUS NOT = 00
+               DISPLAY "ERROR OPENING INDUSTRY FILE: " WS-INDUSTRY-STATUS
+               STOP RUN.
            
            PERFORM UNTIL EOF
                READ INPUT-FILE
@@ -102,8 +133,17 @@
                END-READ
            END-PERFORM.
            
-           CLOSE INPUT-FILE
-                 OUTPUT-FILE.
+           CLOSE INPUT-FILE.
+           IF WS-INPUT-STATUS NOT = 00
+               DISPLAY "ERROR CLOSING INPUT FILE: " WS-INPUT-STATUS.
+           
+           CLOSE OUTPUT-FILE.
+           IF WS-OUTPUT-STATUS NOT = 00
+               DISPLAY "ERROR CLOSING OUTPUT FILE: " WS-OUTPUT-STATUS.
+           
+           CLOSE INDUSTRY-FILE.
+           IF WS-INDUSTRY-STATUS NOT = 00
+               DISPLAY "ERROR CLOSING INDUSTRY FILE: " WS-INDUSTRY-STATUS.
            
            DISPLAY 'CLAIM PROCESSING COMPLETE'.
            STOP RUN.
