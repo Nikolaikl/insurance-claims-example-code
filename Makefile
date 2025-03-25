@@ -69,7 +69,7 @@ run: all INPUT.txt OUTPUT.txt INDFILE
 		$$prog; \
 	done
 	@echo "Running main program with INPUT.txt..."
-	@$(MAIN_BIN) INPUT.txt OUTPUT.txt
+	@$(MAIN_BIN) .INPUT.txt .OUTPUT.txt
 
 # Clean up
 clean:
