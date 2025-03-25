@@ -2,58 +2,20 @@
 
 ## Task Overview
 
-The main task is to implement a disability bonus feature in the pension calculation system. This involves:
+possible tasks include
 
-1. Adding new data fields to handle disability status and bonus calculations
-2. Modifying the calculation logic to include disability bonuses
-3. Updating the output display to show disability bonus information
-4. Ensuring proper validation and error handling for disability-related inputs
+### Debug Running Programm - does not finish
 
-### Implementation Details
+### Develop more features 
 
-- Add new WS-DISABILITY-STATUS field to track disability status (Y/N)
-- Create WS-DISABILITY-BONUS field for bonus calculations
-- Modify pension calculation logic to include bonus when applicable
-- Update output display to show bonus information
-- Add validation for disability status input
+### Refactor to Java
 
-### COBOL Peculiarities
+### Refactor to Python
 
-- COBOL uses fixed-format source code (columns 7-72 for code)
-- Use 88-level condition names for status fields
-- Numeric fields require proper PIC clauses
-- String literals must be properly quoted and aligned
-- Use PERFORM for loops and conditional logic
+### Work on CI/CD Pipeline
 
-### Testing Requirements
+### Add Testing frameworks
 
-1. Test cases for:
-   - Non-disabled individuals (no bonus)
-   - Disabled individuals (with bonus)
-   - Edge cases (minimum/maximum values)
-   - Invalid input handling
-
-2. Test data scenarios:
-   - Various disability levels
-   - Different pension amounts
-   - Boundary conditions
-
-### Coding Standards
-
-- Follow existing code style and conventions
-- Use meaningful data names
-- Add comments for complex logic
-- Maintain proper alignment and spacing
-- Use condition names for status fields
-- Validate all user inputs
-
-### Documentation Requirements
-
-- Update program documentation header
-- Add comments for new logic
-- Document test cases
-- Update user documentation
-- Add change log entry
 
 ## Development Setup
 
