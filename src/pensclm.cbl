@@ -373,9 +373,9 @@
       *----------------------------------------------------------------*
        000-MAIN-PROCESS.
            PERFORM 100-INITIALIZATION.
-           PERFORM 200-PROCESS-CLAIM
-           PERFORM 300-GENERATE-REPORT
-           PERFORM 900-TERMINATION
+           PERFORM 200-PROCESS-CLAIM.
+           PERFORM 300-GENERATE-REPORT.
+           PERFORM 900-TERMINATION.
            .
            
        100-INITIALIZATION.
@@ -491,6 +491,7 @@
            PERFORM 240-LOAD-GEO-DATA.
            PERFORM 250-CALCULATE-COSTS.
            PERFORM 260-PERFORM-CALCULATIONS.
+           .
            PERFORM 300-GENERATE-REPORT.
       *  This here's where the magic happens, kiddo! Back when I       *
       *  wrote this, we didn't have no fancy "machine learning" or     *
@@ -637,8 +638,8 @@
                        MOVE 'RECORD NOT FOUND' TO WS-STATUS-MESSAGE
                    END-IF
                    DISPLAY 'FILE STATUS MEANING: ' WS-STATUS-MESSAGE
-                   DISPLAY 'ACTUAL REGION CODE USED: "' WS-GEO-REGION '"'
-                   PERFORM 900-TERMINATION
+                   DISPLAY 'ACTUAL REGION CODE USED: ' WS-GEO-REGION
+                   PERFORM 900-TERMINATION.
            END-READ.
            
            MOVE REGIONAL-FACTOR OF GEO-FACTOR-RECORD TO WS-GEO-FACTOR.
