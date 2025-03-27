@@ -17,15 +17,6 @@ possible tasks include
 ### Add Testing frameworks
 
 
-## Development Setup
-
-To set up your development environment in a GitHub Codespace:
-
-```bash
-# Run the setup script
-./setup_codespace.sh
-```
-
 ## Building and Running
 
 Use the Makefile for all build tasks:
