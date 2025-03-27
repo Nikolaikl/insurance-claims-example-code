@@ -28,31 +28,30 @@ To set up your development environment in a GitHub Codespace:
 
 ## Building and Running
 
-```bash
-# For GnuCOBOL:
-cobc -x -o polsetup polsetup.cbl
-cobc -x -o clmsetup clmsetup.cbl
-cobc -x -o indsetup indsetup.cbl
-cobc -x -o geosetup geosetup.cbl
-
-# with optimisation
-cobc -O -x -o polsetup polsetup.cbl
-cobc -O -x -o clmsetup clmsetup.cbl
-cobc -O -x -o indsetup indsetup.cbl
-cobc -O -x -o geosetup geosetup.cbl
-
-# Run them in sequence:
-./polsetup
-./clmsetup
-./indsetup
-./geosetup
-
-```
-
-Compile and Run the Main Program:
+Use the Makefile for all build tasks:
 
 ```bash
-cobc -x -o pensclm pensclm.cbl
-./pensclm
+# Build all programs (default)
+make
 
+# Build setup programs
+make setup
+
+# Build main program
+make pensclm
+
+# Run full processing pipeline
+make run
+
+# Clean built binaries
+make clean
+
+# Set up development environment
+make setup-env
 ```
+
+The Makefile handles:
+- Automatic dependency tracking
+- Output file organization in bin/
+- Parallel builds where possible
+- Clean rebuilds
