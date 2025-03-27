@@ -63,14 +63,15 @@ data/INDFILE:
 	mkdir -p data && touch data/INDFILE
 
 run: all data/INPUT.txt data/INDFILE
-	@echo "Running setup programs..."
-	@for prog in $(SETUP_BINS); do \
-		echo "Running $$prog..."; \
-		$$prog; \
-	done
+	@echo "Running setup programs in correct order..."
+	@echo "Running bin/geosetup..." && ./bin/geosetup
+	@echo "Running bin/indsetup..." && ./bin/indsetup
+	@echo "Running bin/polsetup..." && ./bin/polsetup
+	@echo "Running bin/clmsetup..." && ./bin/clmsetup
 	@echo "Running main program..."
 	@$(MAIN_BIN) data/INPUT.txt data/OUTPUT.txt
 
 # Clean up
 clean:
 	rm -f $(SETUP_BINS) $(MAIN_BIN)
+	rm -f data/GEOFILE data/INDFILE data/POLFILE data/CLMFILE

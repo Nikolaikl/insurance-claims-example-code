@@ -42,27 +42,27 @@
            SELECT INPUT-FILE ASSIGN TO "data/INPUT.txt"
            ORGANIZATION IS LINE SEQUENTIAL
            FILE STATUS IS WS-INPUT-STATUS.
-           SELECT POLICY-FILE ASSIGN TO POLFILE
+           SELECT POLICY-FILE ASSIGN TO "data/POLFILE"
            ORGANIZATION IS INDEXED
            ACCESS MODE IS RANDOM
            RECORD KEY IS POLICY-NUMBER OF POLICY-RECORD
            FILE STATUS IS WS-POLICY-STATUS.
            
-           SELECT CLAIM-FILE ASSIGN TO CLMFILE
+           SELECT CLAIM-FILE ASSIGN TO "data/CLMFILE"
            ORGANIZATION IS INDEXED
            ACCESS MODE IS RANDOM
            RECORD KEY IS CLAIM-ID OF CLAIM-RECORD
            FILE STATUS IS WS-CLAIM-STATUS.
            
-           SELECT INDUSTRY-RISK-FILE ASSIGN TO INDFILE
+           SELECT INDUSTRY-RISK-FILE ASSIGN TO "data/INDFILE"
            ORGANIZATION IS INDEXED
            ACCESS MODE IS RANDOM
            RECORD KEY IS INDUSTRY-CODE OF INDUSTRY-RISK-RECORD
            FILE STATUS IS WS-INDUSTRY-STATUS.
            
-           SELECT GEO-FACTOR-FILE ASSIGN TO GEOFILE
+           SELECT GEO-FACTOR-FILE ASSIGN TO "data/GEOFILE"
            ORGANIZATION IS INDEXED
-           ACCESS MODE IS RANDOM
+           ACCESS MODE IS DYNAMIC
            RECORD KEY IS GEO-REGION-CODE OF GEO-FACTOR-RECORD
            FILE STATUS IS WS-GEO-STATUS.
            
@@ -198,6 +198,8 @@
           05 WS-GEO-STATUS         PIC X(2).
           05 WS-REPORT-STATUS      PIC X(2).
           05 WS-INPUT-STATUS       PIC X(2).
+           
+       01 WS-STATUS-MESSAGE        PIC X(15).
           
        01 WS-SWITCHES.
           05 END-OF-FILE-SW        PIC X(1) VALUE 'N'.
@@ -371,10 +373,9 @@
       *----------------------------------------------------------------*
        000-MAIN-PROCESS.
            PERFORM 100-INITIALIZATION.
-           PERFORM 200-PROCESS-CLAIM
-           PERFORM 300-GENERATE-REPORT
-           PERFORM 900-TERMINATION
-           .
+           PERFORM 200-PROCESS-CLAIM.
+           PERFORM 300-GENERATE-REPORT.
+           PERFORM 900-TERMINATION.
            
        100-INITIALIZATION.
       *----------------------------------------------------------------*
@@ -488,7 +489,7 @@
            PERFORM 230-LOAD-INDUSTRY-DATA.
            PERFORM 240-LOAD-GEO-DATA.
            PERFORM 250-CALCULATE-COSTS.
-           PERFORM 260-PERFORM-CALCULATIONS.
+           PERFORM 260-PERFORM-CALCULATIONS
            PERFORM 300-GENERATE-REPORT.
       *  This here's where the magic happens, kiddo! Back when I       *
       *  wrote this, we didn't have no fancy "machine learning" or     *
@@ -627,8 +628,17 @@
            READ GEO-FACTOR-FILE
                INVALID KEY
                    DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION
+                   DISPLAY 'SEARCHED IN FILE: data/GEOFILE'
+                   DISPLAY 'CURRENT GEO REGIONS: NE1 MW2 SE3 WE4 CE5'
+                   DISPLAY 'FILE STATUS CODE: ' WS-GEO-STATUS
+                   MOVE 'OTHER ERROR' TO WS-STATUS-MESSAGE
+                   IF WS-GEO-STATUS = '23'
+                       MOVE 'RECORD NOT FOUND' TO WS-STATUS-MESSAGE
+                   END-IF
+                   DISPLAY 'FILE STATUS MEANING: ' WS-STATUS-MESSAGE
+                   DISPLAY 'ACTUAL REGION CODE USED: ' WS-GEO-REGION
                    PERFORM 900-TERMINATION
-           END-READ.
+           END-READ
            
            MOVE REGIONAL-FACTOR OF GEO-FACTOR-RECORD TO WS-GEO-FACTOR.
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
