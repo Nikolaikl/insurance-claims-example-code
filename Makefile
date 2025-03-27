@@ -74,3 +74,4 @@ run: all data/INPUT.txt data/INDFILE
 # Clean up
 clean:
 	rm -f $(SETUP_BINS) $(MAIN_BIN)
+	rm -f data/GEOFILE data/INDFILE data/POLFILE data/CLMFILE
