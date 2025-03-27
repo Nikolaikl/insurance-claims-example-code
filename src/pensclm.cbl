@@ -198,6 +198,8 @@
           05 WS-GEO-STATUS         PIC X(2).
           05 WS-REPORT-STATUS      PIC X(2).
           05 WS-INPUT-STATUS       PIC X(2).
+           
+       01 WS-STATUS-MESSAGE        PIC X(15).
           
        01 WS-SWITCHES.
           05 END-OF-FILE-SW        PIC X(1) VALUE 'N'.
@@ -630,9 +632,11 @@
                    DISPLAY 'SEARCHED IN FILE: data/GEOFILE'
                    DISPLAY 'CURRENT GEO REGIONS: NE1 MW2 SE3 WE4 CE5'
                    DISPLAY 'FILE STATUS CODE: ' WS-GEO-STATUS
-                   DISPLAY 'FILE STATUS MEANING: '
-                       IF WS-GEO-STATUS = '23' 'RECORD NOT FOUND'
-                       ELSE 'OTHER ERROR'
+                   MOVE 'OTHER ERROR' TO WS-STATUS-MESSAGE
+                   IF WS-GEO-STATUS = '23'
+                       MOVE 'RECORD NOT FOUND' TO WS-STATUS-MESSAGE
+                   END-IF
+                   DISPLAY 'FILE STATUS MEANING: ' WS-STATUS-MESSAGE
                    PERFORM 900-TERMINATION
            END-READ.
            
