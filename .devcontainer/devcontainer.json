@@ -6,9 +6,11 @@
       "extensions": [
         "Zowe.zowe-explorer-vscode",
         "IBM.zopeneditor",
+        "broadcommfd.cobol-language-support",
+        "broadcommfd.ccf",
         "GitHub.copilot"
       ]
     }
   },
-  "postCreateCommand": "bash setup_codespace.sh"
+  "postCreateCommand": "bash scripts/setup_codespace.sh"
 }
