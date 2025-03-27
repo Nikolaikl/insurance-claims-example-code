@@ -10,5 +10,5 @@
       ]
     }
   },
-  "postCreateCommand": "bash setup_codespace.sh"
+  "postCreateCommand": "bash scripts/setup_codespace.sh"
 }
