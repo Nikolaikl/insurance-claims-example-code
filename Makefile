@@ -62,7 +62,7 @@ $(BIN_DIR)/pensclm: $(MAIN_SRC) $(SETUP_SRCS)
 data/INDFILE:
 	mkdir -p data && touch data/INDFILE
 
-run: all data/INPUT.txt data/OUTPUT.txt data/INDFILE
+run: all data/INPUT.txt data/INDFILE
 	@echo "Running setup programs..."
 	@for prog in $(SETUP_BINS); do \
 		echo "Running $$prog..."; \
