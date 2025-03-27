@@ -69,8 +69,6 @@ run: all data/INPUT.txt data/INDFILE
 	@echo "Running bin/polsetup..." && ./bin/polsetup
 	@echo "Running bin/clmsetup..." && ./bin/clmsetup
 	@echo "Running main program..."
-	@./bin/pensclm
-	@echo "Running main program..."
 	@$(MAIN_BIN) data/INPUT.txt data/OUTPUT.txt
 
 # Clean up

@@ -62,7 +62,7 @@
            
            SELECT GEO-FACTOR-FILE ASSIGN TO "data/GEOFILE"
            ORGANIZATION IS INDEXED
-           ACCESS MODE IS RANDOM
+           ACCESS MODE IS DYNAMIC
            RECORD KEY IS GEO-REGION-CODE OF GEO-FACTOR-RECORD
            FILE STATUS IS WS-GEO-STATUS.
            
@@ -629,7 +629,10 @@
                    DISPLAY 'REGION NOT FOUND: ' WS-GEO-REGION
                    DISPLAY 'SEARCHED IN FILE: data/GEOFILE'
                    DISPLAY 'CURRENT GEO REGIONS: NE1 MW2 SE3 WE4 CE5'
-                   DISPLAY 'FILE STATUS: ' WS-GEO-STATUS
+                   DISPLAY 'FILE STATUS CODE: ' WS-GEO-STATUS
+                   DISPLAY 'FILE STATUS MEANING: '
+                       IF WS-GEO-STATUS = '23' 'RECORD NOT FOUND'
+                       ELSE 'OTHER ERROR'
                    PERFORM 900-TERMINATION
            END-READ.
            
