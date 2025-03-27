@@ -637,6 +637,7 @@
                        MOVE 'RECORD NOT FOUND' TO WS-STATUS-MESSAGE
                    END-IF
                    DISPLAY 'FILE STATUS MEANING: ' WS-STATUS-MESSAGE
+                   DISPLAY 'ACTUAL REGION CODE USED: "' WS-GEO-REGION '"'
                    PERFORM 900-TERMINATION
            END-READ.
            
