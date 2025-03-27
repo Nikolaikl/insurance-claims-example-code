@@ -375,8 +375,7 @@
            PERFORM 100-INITIALIZATION.
            PERFORM 200-PROCESS-CLAIM.
            PERFORM 300-GENERATE-REPORT.
-           PERFORM 900-TERMINATION.
-           .
+           PERFORM 900-TERMINATION
            
        100-INITIALIZATION.
       *----------------------------------------------------------------*
@@ -490,8 +489,7 @@
            PERFORM 230-LOAD-INDUSTRY-DATA.
            PERFORM 240-LOAD-GEO-DATA.
            PERFORM 250-CALCULATE-COSTS.
-           PERFORM 260-PERFORM-CALCULATIONS.
-           .
+           PERFORM 260-PERFORM-CALCULATIONS
            PERFORM 300-GENERATE-REPORT.
       *  This here's where the magic happens, kiddo! Back when I       *
       *  wrote this, we didn't have no fancy "machine learning" or     *
@@ -639,8 +637,8 @@
                    END-IF
                    DISPLAY 'FILE STATUS MEANING: ' WS-STATUS-MESSAGE
                    DISPLAY 'ACTUAL REGION CODE USED: ' WS-GEO-REGION
-                   PERFORM 900-TERMINATION.
-           END-READ.
+                   PERFORM 900-TERMINATION
+           END-READ
            
            MOVE REGIONAL-FACTOR OF GEO-FACTOR-RECORD TO WS-GEO-FACTOR.
            MOVE REGULATORY-FACTOR OF GEO-FACTOR-RECORD TO WS-REG-FACTOR.
