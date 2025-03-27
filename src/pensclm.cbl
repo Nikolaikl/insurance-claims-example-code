@@ -375,7 +375,7 @@
            PERFORM 100-INITIALIZATION.
            PERFORM 200-PROCESS-CLAIM.
            PERFORM 300-GENERATE-REPORT.
-           PERFORM 900-TERMINATION
+           PERFORM 900-TERMINATION.
            
        100-INITIALIZATION.
       *----------------------------------------------------------------*
