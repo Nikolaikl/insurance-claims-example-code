@@ -39,7 +39,7 @@
       * - CLAIM-REPORT: Output report file for claim calculations      *
       * - INPUT-FILE: Input file containing claim records              *
       *----------------------------------------------------------------*
-           SELECT INPUT-FILE ASSIGN TO "INPUT.txt"
+           SELECT INPUT-FILE ASSIGN TO "data/INPUT.txt"
            ORGANIZATION IS LINE SEQUENTIAL
            FILE STATUS IS WS-INPUT-STATUS.
            SELECT POLICY-FILE ASSIGN TO POLFILE
@@ -66,7 +66,7 @@
            RECORD KEY IS GEO-REGION-CODE OF GEO-FACTOR-RECORD
            FILE STATUS IS WS-GEO-STATUS.
            
-           SELECT CLAIM-REPORT ASSIGN TO 'OUTPUT.txt'
+           SELECT CLAIM-REPORT ASSIGN TO 'data/OUTPUT.txt'
            ORGANIZATION IS LINE SEQUENTIAL
            FILE STATUS IS WS-REPORT-STATUS.
        
@@ -371,9 +371,10 @@
       *----------------------------------------------------------------*
        000-MAIN-PROCESS.
            PERFORM 100-INITIALIZATION.
-           PERFORM 200-PROCESS-CLAIM.
-           PERFORM 300-GENERATE-REPORT.
-           PERFORM 900-TERMINATION.
+           PERFORM 200-PROCESS-CLAIM
+           PERFORM 300-GENERATE-REPORT
+           PERFORM 900-TERMINATION
+           .
            
        100-INITIALIZATION.
       *----------------------------------------------------------------*
@@ -452,7 +453,8 @@
                    NOT AT END
                        PERFORM 210-PROCESS-CLAIM-RECORD
                END-READ
-           END-PERFORM.
+           END-PERFORM
+           DISPLAY 'PROCESSED ALL CLAIMS IN INPUT FILE'.
            
        210-PROCESS-CLAIM-RECORD.
       *----------------------------------------------------------------*

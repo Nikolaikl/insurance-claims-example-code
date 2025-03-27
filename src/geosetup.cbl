@@ -49,7 +49,7 @@
            
       * Midwest Region 2 (Medium cost, moderate regulations)  
            MOVE 'MW2' TO GEO-REGION-CODE.
-           MOVE 'MIDWEST REGION 2     ' TO GEO-REGION-NAME.
+           MOVE 'MIDWEST REGION 2' TO GEO-REGION-NAME.
            MOVE 1.080 TO REGIONAL-FACTOR.
            MOVE 1.050 TO REGULATORY-FACTOR.
            MOVE 1.060 TO WAGE-INDEX.
