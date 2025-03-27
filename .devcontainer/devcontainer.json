@@ -1,0 +1,14 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Zowe.zowe-explorer-vscode",
+        "IBM.zopeneditor",
+        "GitHub.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "bash setup_codespace.sh"
+}
